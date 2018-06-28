@@ -1,4 +1,4 @@
-# Planet: Understanding the Amazon from Space
+# [Planet: Understanding the Amazon from Space](https://www.kaggle.com/c/planet-understanding-the-amazon-from-space/data)
 
 Use satellite data to track the human footprint in the Amazon rainforest.
 
