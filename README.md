@@ -8,8 +8,6 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
 ```
 keras(backend tensorflow)
 numpy
@@ -21,9 +19,7 @@ OpenCV
 
 ### Training
 
-Run the main.py file in src to start training. VGG-Net fine tuned with conv layers frozen. The top of the model is replaced with 2 FC layers with 17 class classification.
-
-Say what the step will be
+Run the main.py file in src to start training. VGG-Net fine tuned with conv layers frozen. The top of the model is replaced with 2 FC layers for classification.
 
 ```
 python ./src/main.py
@@ -31,11 +27,11 @@ python ./src/main.py
 
 ## Running the tests
 
-You can monitor the loss and metrics on tensorboard. The demo to test images can be found in ./demo/demo.ipynb.
+You can monitor the loss and metrics on tensorboard. The logs are found in the ./logs/ dir. The demo to test images can be found in ./demo/demo.ipynb.
 
 ## Authors
 
-* **Maneesh Bilalpur** - *Initial work* - [Website](https://bmaneesh.github.io/bmaneesh/)
+* **[Maneesh Bilalpur](https://bmaneesh.github.io/bmaneesh/)**
 
 ## License
 
