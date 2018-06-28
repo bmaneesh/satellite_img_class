@@ -5,7 +5,7 @@
 #SBATCH --mem-per-cpu=2048
 #SBATCH --time=15:00:00
 #SBATCH --mail-type=END
-#SBATCH --workdir="/home/maneesh/satellite/src"
+#SBATCH --workdir="./"
 
 module add cuda/8.0
 module add cudnn/7-cuda-8.0
