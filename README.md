@@ -29,7 +29,7 @@ python ./src/main.py
 Please place the train-jpg, test-jpg, test-jpg-additional, test_v2.csv in `./`
 ## Running the tests
 
-You can monitor the loss and metrics on tensorboard. The logs are found in the ./logs/ dir. The demo to test images can be found in ./demo/demo.ipynb.
+You can monitor the loss and metrics on tensorboard. The logs are found in the `./logs/`. The demo to test images can be found in `./demo/demo.ipynb`
 
 Monitor the loss and metrics using tensorboard
 
