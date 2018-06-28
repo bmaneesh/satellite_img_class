@@ -54,14 +54,12 @@ class AmazonPreprocessor:
         Initialize the preprocessor and preprocess required data for the classifier to use
         """
         self.X_train, self.y_train, self.X_val, self.y_val, self.y_map = self._get_train_data_files()
-        # Contains all the test files including the additional ones
         self.X_test, self.X_test_filename = self._get_test_data_files()
 
         if not self.img_resize:
             self.img_resize = Image.open(self.X_test_filename[0]).size
             print("Default image size is", self.img_resize)
 
-        # The validation data cannot be preprocessed in batches as we also need them to compute the f2 score
         self.X_val, self.y_val = self._preprocess_val_files()
 
     def get_train_generator(self, batch_size):
@@ -75,22 +73,14 @@ class AmazonPreprocessor:
         :return: generator
             The batch generator
         """
-        # Image Augmentation
-        datagen = ImageDataGenerator(
-            rescale=1./255,
-            shear_range=0.2,
-            horizontal_flip=True,
-            vertical_flip=True)  # randomly flip images horizontally
         loop_range = len(self.X_train)
         num_steps = int(math.ceil(loop_range / batch_size))
         while True:
             for i in range(num_steps):
                 start_offset = batch_size * i
 
-                # The last remaining files could be smaller than the batch_size
                 range_offset = min(batch_size, loop_range - start_offset)
 
-                # If we reached the end of the list then we break the loop
                 if range_offset <= 0:
                     break
 
@@ -98,17 +88,12 @@ class AmazonPreprocessor:
                 batch_labels = np.zeros((range_offset, len(self.y_train[0])))
 
                 for j in range(range_offset):
-                    # Maybe shuffle the index?
                     img = Image.open(self.X_train[start_offset + j])
                     img.thumbnail(self.img_resize)
 
-                    # Augment the image `img` here
-
-                    # Convert to RGB and normalize
                     img_array = np.asarray(img.convert("RGB"), dtype=np.float32)
 
                     img_array = img_array[:, :, ::-1]
-                    # Zero-center by mean pixel
                     img_array[:, :, 0] -= 103.939
                     img_array[:, :, 1] -= 116.779
                     img_array[:, :, 2] -= 123.68
@@ -116,13 +101,6 @@ class AmazonPreprocessor:
                     batch_features[j] = img_array
                     batch_labels[j] = self.y_train[start_offset + j]
 
-                # Augment the images (using Keras allow us to add randomization/shuffle to augmented images)
-                # Here the next batch of the data generator (and only one for this iteration)
-                # is taken and returned in the yield statement
-                # print type(batch_labels), len(batch_labels)
-                # batch_labels = np.split(batch_labels,17, axis=1)
-                # print len(batch_labels)
-                # yield (batch_features, np.split(batch_labels,17, axis=1))
                 yield (batch_features, batch_labels)
 
 
@@ -137,72 +115,19 @@ class AmazonPreprocessor:
         :return: generator
             The batch generator
         """
-        # Image Augmentation
-        datagen = ImageDataGenerator(
-            rescale=1./255,
-            shear_range=0.2,
-            horizontal_flip=True,
-            vertical_flip=True)  # randomly flip images horizontally
         loop_range = len(self.X_val)
         num_steps = int(math.ceil(loop_range / batch_size))
         while True:
             for i in range(num_steps):
                 start_offset = batch_size * i
 
-                # The last remaining files could be smaller than the batch_size
                 range_offset = min(batch_size, loop_range - start_offset)
 
-                # If we reached the end of the list then we break the loop
                 if range_offset > 0:
                     batch_features = self.X_val[start_offset:start_offset + range_offset]
                     batch_labels = self.y_val[start_offset:start_offset + range_offset]
 
-            # Augment the images (using Keras allow us to add randomization/shuffle to augmented images)
-            # Here the next batch of the data generator (and only one for this iteration)
-            # is taken and returned in the yield statement
-            # print type(batch_labels), len(batch_labels)
-            # batch_labels = np.split(batch_labels,17, axis=1)
-            # print len(batch_labels)
-            # yield (batch_features, np.split(batch_labels,17, axis=1))
             yield (batch_features, batch_labels)
-
-
-    def get_val_generator_limited(self, batch_size):
-        """
-        Returns a batch generator which transforms chunk of raw images into numpy matrices
-        and then "yield" them for the classifier. Doing so allow to greatly optimize
-        memory usage as the images are processed then deleted by chunks (defined by batch_size)
-        instead of preprocessing them all at once and feeding them to the classifier.
-        :param batch_size: int
-            The batch size
-        :return: generator
-            The batch generator
-        """
-        # Image Augmentation
-        # datagen = ImageDataGenerator(
-            # rescale=1./255,
-            # shear_range=0.2,
-            # horizontal_flip=True,
-            # vertical_flip=True)  # randomly flip images horizontally
-        loop_range = self.X_val.shape[0]
-        num_steps = int(math.ceil(loop_range / batch_size))
-        # while True:
-        for i in range(num_steps):
-            start_offset = batch_size * i
-
-            # The last remaining files could be smaller than the batch_size
-            range_offset = min(batch_size, loop_range - start_offset)
-
-            # If we reached the end of the list then we break the loop
-            if range_offset > 0:
-                batch_features = self.X_val[start_offset:start_offset + range_offset]
-                batch_labels = self.y_val[start_offset:start_offset + range_offset]
-
-                # Augment the images (using Keras allow us to add randomization/shuffle to augmented images)
-                # Here the next batch of the data generator (and only one for this iteration)
-                # is taken and returned in the yield statement
-                # yield (batch_features, np.split(batch_labels, 17, axis=1))
-                yield (batch_features, batch_labels)
 
 
     def get_prediction_generator(self, batch_size):
@@ -217,17 +142,14 @@ class AmazonPreprocessor:
             The batch generator
         """
 
-        # NO SHUFFLE HERE as we need our predictions to be in the same order as the inputs
         loop_range = len(self.X_test_filename)
         num_steps = int(math.ceil(loop_range / batch_size))
         while True:
             for i in range(num_steps):
                 start_offset = batch_size * i
 
-                # The last remaining files could be smaller than the batch_size
                 range_offset = min(batch_size, loop_range - start_offset)
 
-                # If we reached the end of the list then we break the loop
                 if range_offset <= 0:
                     break
 
@@ -237,11 +159,9 @@ class AmazonPreprocessor:
                     img = Image.open(self.X_test_filename[start_offset + j])
                     img.thumbnail(self.img_resize)
 
-                    # Convert to RGB and normalize
                     img_array = np.asarray(img.convert("RGB"), dtype=np.float32)
 
                     img_array = img_array[:, :, ::-1]
-                    # Zero-center by mean pixel
                     img_array[:, :, 0] -= 103.939
                     img_array[:, :, 1] -= 116.779
                     img_array[:, :, 2] -= 123.68
@@ -367,12 +287,9 @@ class AmazonPreprocessor:
         img = Image.open(file_path)
         img.thumbnail(self.img_resize)
 
-        # Augment the image `img` here
 
-        # Convert to RGB and normalize
         img_array = np.array(img.convert("RGB"), dtype=np.float32)
         img_array = img_array[:, :, ::-1]
-        # Zero-center by mean pixel
         img_array[:, :, 0] -= 103.939
         img_array[:, :, 1] -= 116.779
         img_array[:, :, 2] -= 123.68
@@ -396,11 +313,6 @@ class AmazonPreprocessor:
         """
         x = []
         final_val_labels = []
-
-        # Multiprocess transformation, the map() function take a function as a 1st argument
-        # and the argument to pass to it as the 2nd argument. These arguments are processed
-        # asynchronously on threads defined by process_count and their results are stored in
-        # the x_test and x_test_filename lists
         print("Transforming val dataset...")
         sys.stdout.flush()
         with ThreadPoolExecutor(self.process_count) as pool:
@@ -418,7 +330,6 @@ class AmazonPreprocessor:
     def _get_test_data_files(self):
         files_name = os.listdir(self.test_jpeg_dir)
         files_name_add = os.listdir(self.test_additional_jpeg_dir)
-        # ! hstack is deprecated
         X_test_filename = np.hstack(([name.split(".")[0] for name in files_name],
                                      [name.split(".")[0] for name in files_name_add]))
         X_test_file_path = np.hstack(([self.test_jpeg_dir + "/" + name for name in files_name],
