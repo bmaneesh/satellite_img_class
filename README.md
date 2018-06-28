@@ -43,5 +43,4 @@ tensorboard --logdir=20180628-122047
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-The data_helper function might be mostly adopted from the Kaggle submission(s), adjusted for the current solution requirements.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details. The data_helper function might be mostly adopted from the Kaggle submission(s), adjusted for the current solution requirements.
