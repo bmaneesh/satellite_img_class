@@ -14,8 +14,9 @@ numpy
 pandas
 tqdm
 PIL
-OpenCV
 ```
+
+Python 2.7 environment was used for the development.
 
 ### Training
 
@@ -25,9 +26,16 @@ Run the main.py file in src to start training. VGG-Net fine tuned with conv laye
 python ./src/main.py
 ```
 
+Please place the train-jpg, test-jpg, test-jpg-additional, test_v2.csv in ./
 ## Running the tests
 
 You can monitor the loss and metrics on tensorboard. The logs are found in the ./logs/ dir. The demo to test images can be found in ./demo/demo.ipynb.
+
+Monitor the loss and metrics using tensorboard
+
+```
+tensorboard --logdir=20180628-122047
+```
 
 ## Authors
 
