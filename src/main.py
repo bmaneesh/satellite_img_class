@@ -51,7 +51,7 @@ model_out = Dense(256, activation='relu', input_shape=initial_model.output_shape
 
 out = []
 
-interm_fc_layer = Dense(128, activation='sigmoid')(model_out)
+interm_fc_layer = Dense(128, activation='relu')(model_out)
 out.append(Dense(17, activation='sigmoid')(interm_fc_layer))
 
 model = Model(initial_model.input, out)

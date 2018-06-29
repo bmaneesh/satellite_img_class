@@ -20,7 +20,7 @@ Python 2.7 environment was used for the development.
 
 ### Training
 
-Run the main.py file in src to start training. VGG-Net fine tuned with conv layers frozen. The top of the model is replaced with 2 FC layers for classification.
+Run the main.py file in src to start training. The model is VGG-Net fine tuned with conv layers frozen. The top of the model is replaced with 2 FC layers for classification.
 
 ```
 python ./src/main.py
@@ -34,7 +34,7 @@ You can monitor the loss and metrics on tensorboard. The logs are found in the `
 Monitor the loss and metrics using tensorboard
 
 ```
-tensorboard --logdir=20180628-122047
+tensorboard --logdir=20180629-091737
 ```
 
 ## Authors

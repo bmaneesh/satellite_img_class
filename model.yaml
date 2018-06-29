@@ -495,7 +495,7 @@ config:
     name: dense_1
   - class_name: Dense
     config:
-      activation: sigmoid
+      activation: relu
       activity_regularizer: null
       bias_constraint: null
       bias_initializer:
